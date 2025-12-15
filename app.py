@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import joblib
@@ -7,6 +6,9 @@ import os
 import plotly.express as px
 import zipfile
 
+# -------------------------------
+# Load model from ZIP
+# -------------------------------
 MODEL_ZIP = "calories_model.zip"
 MODEL_PATH = "calories_model.pkl"
 
@@ -19,65 +21,59 @@ def load_model():
 
 model = load_model()
 
-
-# -------------------------------
-# Load the model
-# -------------------------------
-MODEL_PATH = "calories_model.pkl"
-
-if not os.path.exists(MODEL_PATH):
-    st.error(f"Model file not found at {MODEL_PATH}. Please train and save it first.")
-    st.stop()
-
-model = joblib.load(MODEL_PATH)
-
 # -------------------------------
 # Streamlit Page Config
 # -------------------------------
-st.set_page_config(page_title="🔥 Calories Burn Predictor", page_icon="🔥", layout="wide")
+st.set_page_config(
+    page_title="🔥 Calories Burn Predictor",
+    page_icon="🔥",
+    layout="wide"
+)
 
-# Custom CSS for a clean, modern look
+# -------------------------------
+# Custom CSS
+# -------------------------------
 st.markdown("""
-    <style>
-    .stApp {
-        background-color: #0e1117;
-        color: white;
-        font-family: 'Segoe UI', sans-serif;
-    }
-    h1, h2, h3 {
-        color: #ffb703;
-    }
-    .stButton button {
-        background-color: #ffb703;
-        color: black;
-        font-weight: bold;
-        border-radius: 10px;
-        padding: 0.5rem 1rem;
-    }
-    </style>
+<style>
+.stApp {
+    background-color: #0e1117;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+h1, h2, h3 {
+    color: #ffb703;
+}
+.stButton button {
+    background-color: #ffb703;
+    color: black;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+}
+</style>
 """, unsafe_allow_html=True)
 
 st.title("🔥 Calories Burn Prediction App")
 st.write("### Estimate your calories burned based on workout and body stats.")
 
 # -------------------------------
-# Input Section (2-column layout)
+# Input Section
 # -------------------------------
 col1, col2 = st.columns(2)
 
 with col1:
     gender = st.selectbox("Gender", ["male", "female"])
-    age = st.number_input("Age (years)", min_value=10, max_value=100, value=25)
-    height = st.number_input("Height (cm)", min_value=100, max_value=250, value=170)
-    weight = st.number_input("Weight (kg)", min_value=30, max_value=200, value=70)
+    age = st.number_input("Age (years)", 10, 100, 25)
+    height = st.number_input("Height (cm)", 100, 250, 170)
+    weight = st.number_input("Weight (kg)", 30, 200, 70)
 
 with col2:
-    duration = st.number_input("Workout Duration (minutes)", min_value=1, max_value=300, value=60)
-    heart_rate = st.number_input("Average Heart Rate (bpm)", min_value=60, max_value=200, value=120)
-    body_temp = st.number_input("Body Temperature (°C)", min_value=35.0, max_value=42.0, value=37.0)
+    duration = st.number_input("Workout Duration (minutes)", 1, 300, 60)
+    heart_rate = st.number_input("Average Heart Rate (bpm)", 60, 200, 120)
+    body_temp = st.number_input("Body Temperature (°C)", 35.0, 42.0, 37.0)
 
 # -------------------------------
-# Prediction Section
+# Prediction
 # -------------------------------
 if st.button("🚀 Predict Calories Burned"):
     input_data = pd.DataFrame({
@@ -99,9 +95,13 @@ if st.button("🚀 Predict Calories Burned"):
     # -------------------------------
     st.subheader("📊 Comparison with Common Activities")
 
-    # Sample comparison data
     sample_data = pd.DataFrame({
-        "Activity": ["Walking (30 min)", "Jogging (30 min)", "Cycling (30 min)", "Your Workout"],
+        "Activity": [
+            "Walking (30 min)",
+            "Jogging (30 min)",
+            "Cycling (30 min)",
+            "Your Workout"
+        ],
         "Calories Burned": [120, 240, 180, prediction]
     })
 
@@ -109,14 +109,12 @@ if st.button("🚀 Predict Calories Burned"):
         sample_data,
         x="Activity",
         y="Calories Burned",
-        color="Activity",
-        color_discrete_sequence=px.colors.sequential.Viridis,
         text="Calories Burned",
         title="Calories Burned Comparison Chart"
     )
 
     fig.update_traces(texttemplate='%{text:.0f} kcal', textposition='outside')
-    fig.update_layout(showlegend=False, yaxis_title="Calories Burned (kcal)")
+    fig.update_layout(showlegend=False)
 
     st.plotly_chart(fig, use_container_width=True)
 
@@ -125,3 +123,4 @@ if st.button("🚀 Predict Calories Burned"):
 # -------------------------------
 st.markdown("---")
 st.caption("💻 Built with Streamlit | 🤖 Model: Random Forest Regressor")
+
