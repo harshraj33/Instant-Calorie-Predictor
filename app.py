@@ -5,6 +5,20 @@ import joblib
 import numpy as np
 import os
 import plotly.express as px
+import zipfile
+
+MODEL_ZIP = "calories_model.zip"
+MODEL_PATH = "calories_model.pkl"
+
+@st.cache_resource
+def load_model():
+    if not os.path.exists(MODEL_PATH):
+        with zipfile.ZipFile(MODEL_ZIP, "r") as zip_ref:
+            zip_ref.extractall(".")
+    return joblib.load(MODEL_PATH)
+
+model = load_model()
+
 
 # -------------------------------
 # Load the model
