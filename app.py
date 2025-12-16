@@ -53,7 +53,7 @@ h1, h2, h3 {
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🔥 Calories Burn Prediction App")
+st.title("🔥 Calories Burnt Prediction App")
 st.write("### Estimate your calories burned based on workout and body stats.")
 
 # -------------------------------
